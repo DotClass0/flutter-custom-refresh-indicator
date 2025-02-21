@@ -9,10 +9,10 @@ class IndicatorController extends Animation<double>
   double _value;
 
   /// Represents the **minimum** value that an indicator can have.
-  static double get minValue => 0.0;
+  final double minValue;
 
   /// Represents the **maximum** value that an indicator can have.
-  static double get maxValue => 1.5;
+  final double maxValue;
 
   /// Current indicator value / progress
   @override
@@ -20,12 +20,15 @@ class IndicatorController extends Animation<double>
 
   /// Creates [CustomRefreshIndicator] controller class
   factory IndicatorController({
+    double? maxValue,
     bool? refreshEnabled,
   }) =>
-      IndicatorController._(refreshEnabled: refreshEnabled);
+      IndicatorController._(maxValue: maxValue, refreshEnabled: refreshEnabled);
 
   IndicatorController._({
     double? value,
+    double? minValue,
+    double? maxValue,
     AxisDirection? direction,
     ScrollDirection? scrollingDirection,
     IndicatorState? state,
@@ -34,6 +37,8 @@ class IndicatorController extends Animation<double>
         _scrollingDirection = scrollingDirection ?? ScrollDirection.idle,
         _direction = direction ?? AxisDirection.down,
         _value = value ?? 0.0,
+        minValue = minValue ?? 0.0,
+        maxValue = maxValue ?? 1.5,
         _isRefreshEnabled = refreshEnabled ?? true,
         _shouldStopDrag = false;
 

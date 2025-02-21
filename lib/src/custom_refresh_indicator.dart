@@ -89,12 +89,6 @@ class CustomRefreshIndicator extends StatefulWidget {
   /// The default value equals `0.1(6)`.
   final double containerExtentPercentageToArmed;
 
-  /// The distance the user can scroll in percent.
-  /// A value > 1.0 enables overscrolling.
-  ///
-  /// The default value equals `1.5`.
-  final double? scrollExtent;
-
   /// {@template custom_refresh_indicator.child}
   /// Part of widget tree that contains scrollable widget (like ListView).
   /// {@endtemplate}
@@ -174,7 +168,6 @@ class CustomRefreshIndicator extends StatefulWidget {
     this.offsetToArmed,
     this.onStateChanged,
     double? containerExtentPercentageToArmed,
-    this.scrollExtent,
     this.leadingScrollIndicatorVisible = false,
     this.trailingScrollIndicatorVisible = true,
     this.durations = const RefreshIndicatorDurations(),
@@ -214,9 +207,6 @@ class CustomRefreshIndicatorState extends State<CustomRefreshIndicator>
       widget.controller ??
       (_internalIndicatorController ??= IndicatorController());
 
-  static const double _kPositionLimit = 1.5;
-  static const double _kInitialValue = 0.0;
-
   @override
   void initState() {
     _dragOffset = 0;
@@ -225,9 +215,9 @@ class CustomRefreshIndicatorState extends State<CustomRefreshIndicator>
 
     _animationController = AnimationController(
       vsync: this,
-      upperBound: widget.scrollExtent ?? _kPositionLimit,
-      lowerBound: _kInitialValue,
-      value: _kInitialValue,
+      upperBound: controller.maxValue,
+      lowerBound: controller.minValue,
+      value: controller.minValue,
     )..addListener(_updateCustomRefreshIndicatorValue);
 
     super.initState();
@@ -516,7 +506,7 @@ class CustomRefreshIndicatorState extends State<CustomRefreshIndicator>
     }
 
     /// triggers indicator update
-    _animationController.value = newValue.clamp(0.0, widget.scrollExtent ?? _kPositionLimit);
+    _animationController.value = newValue.clamp(controller.minValue, controller.maxValue);
   }
 
   /// Notifications can only be handled in the "dragging" and "armed" state.
